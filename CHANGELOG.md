@@ -5,6 +5,37 @@ All notable changes to this repository. Dates are `YYYY-MM-DD`.
 This file is not translated: it is a historical record that grows with each version, and
 translating it would mean two histories that drift apart.
 
+## [1.0.2] — 2026-11-02
+
+**Caught up with the game's v0.2.10, and the recipe checked against it rather than assumed.**
+The game moved from v0.2.7 to v0.2.10 in a day, touching four files this recipe cares about:
+`CMakeLists.txt` (+7), `src/main/main.cpp` (+1/-1, the version string), `us.toml` (+33) and
+`patches/widescreen.c` (+6/-3).
+
+### Changed
+
+- **`tools/compilar.ps1`: the default `-Version` is now `v0.2.10`.**
+- The six anchors `tools/parche_uwp_build.py` matches on were re-checked against the upstream's
+  clean files: all six still appear exactly once, on `v0.2.10` and on the current `main` alike.
+  **No tool needed changing** — recorded here because it was verified, not assumed.
+- `README.md` / `README.es.md`: the port is built from v0.2.10, package `0.1.0.5`. The
+  controller play-through on record is still the one from package `0.1.0.3` (v0.2.7); 0.1.0.5 has
+  been booted and measured but not played through, and the table now says so.
+- The upstream fault table went from three entries to six. #48 and #49, listed as open, were
+  fixed in v0.2.9 and v0.2.8; #52 was fixed in v0.2.10; #54 and #55 are new and still open.
+
+### Noted, not fixed
+
+- The game's `main` carries three commits that are in no release (PR #56, `model_ids.cpp`),
+  which are the fix for #55. The recipe still builds from the `v0.2.10` tag.
+
+### Housekeeping
+
+- `tools/compilar.ps1` shows as 255 lines changed for a one-line edit. Its blob had been stored
+  with CRLF; this commit stores it with LF, which is what `.gitattributes` has asked for since
+  1.0.0 (`*.ps1 text eol=crlf` means LF in the repository and CRLF in the working tree). A clone
+  still gets CRLF and the BOM, byte for byte as before — only the stored form changed.
+
 ## [1.0.1] — 2026-11-02
 
 **A gap in the recipe, found by following it on a game it was not written for.** Taking

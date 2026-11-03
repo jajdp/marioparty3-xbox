@@ -22,25 +22,33 @@ arranque; aquí no se ha medido nada de eso.
 
 ## En qué punto está el port
 
-Construido desde la **v0.2.7** del juego. Es el único de los tres que se ha jugado de verdad,
+Construido desde la **v0.2.10** del juego. La receta se volvió a comprobar contra ella el
+2026-11-02: las seis anclas de las que depende `tools/parche_uwp_build.py` siguen aplicando, sin
+tocar nada, tanto en `v0.2.10` como en el `main` de ahora, así que nada de aquí hubo que
+reescribirlo por las versiones intermedias. Es el único de los tres que se ha jugado de verdad,
 así que es el que más tiene que contar. Medido en una Xbox Series X:
 
 | | |
 |---|---|
-| ✅ Arranca, dibuja y responde al mando | Paquete «Mario Party 3 Recomp» 0.1.0.3, instalado por el Device Portal |
+| ✅ Arranca, dibuja y responde al mando | Paquete «Mario Party 3 Recomp» 0.1.0.5, construido desde la v0.2.10 e instalado por el Device Portal el 2026-11-02 |
 | ✅ **60 FPS**, medidos con el contador del propio juego | La lógica corre a 30 Hz y RT64 interpola; el contador mide fotogramas presentados |
 | ✅ El launcher sale y la ROM se valida sola | Desde `LocalState`, sin diálogo |
 | ✅ La intro se dibuja **completa**, a 1920×1080 y sin superficies negras | El arreglo del culling del ubershader y el de los modos del mipmap funcionan desde el primer arranque — ver [`docs/HOW-IT-WORKS.es.md`](docs/HOW-IT-WORKS.es.md) |
-| ✅ **Los tableros y los minijuegos se juegan** | Probado con mando en una Xbox Series X el 2026-11-01 |
+| ✅ **Los tableros y los minijuegos se juegan** | Probado con mando en una Xbox Series X el 2026-11-01 — con el paquete **0.1.0.3**, construido desde la v0.2.7. El 0.1.0.5 de arriba está arrancado y medido, pero aún no jugado con mando |
+| ✅ La cinemática de apertura se dibuja a 4:3 exacto | 1438 × 1079 px, medidos en la propia consola, con el paquete 0.1.0.5 |
 
-**Tres fallos encontrados jugando, y ninguno es del port.** Los tres son del proyecto del juego,
-se reproducen en su propia compilación de Windows, y están reportados aguas arriba:
+**Seis fallos encontrados jugando, y ninguno es del port.** Los seis son del proyecto del juego,
+se reproducen en su propia compilación de Windows, y están reportados aguas arriba. Cuatro se
+arreglaron en el día:
 
 | | Qué era | Cómo está |
 |---|---|---|
 | [#43](https://github.com/n64hub/mario-party-3-recomp/issues/43) | Todo lo plano se dibujaba pálido y quemado: el juego apaga la corrección de gamma del N64 al arrancar y esa llamada no llegaba al código recompilado | **Arreglado** por su autor el mismo día, en la v0.2.7. Midiendo la misma escena antes y después, la versión vieja es exactamente la nueva elevada a 1/2,2 — el exponente que mejor ajusta es **0,455**, con 0,21 niveles de error medio sobre 256 |
-| [#48](https://github.com/n64hub/mario-party-3-recomp/issues/48) | El barrido del cambio de turno no se dibuja, así que se ven las casillas del tablero irse de grupo en grupo | Abierto |
-| [#49](https://github.com/n64hub/mario-party-3-recomp/issues/49) | Los minijuegos se estiran en vez de quedarse en 4:3, y un par de ellos se vuelven muy difíciles de jugar | Abierto. ⚠ Hasta que se arregle, esos minijuegos se juegan bien con la ventana en **4:3** |
+| [#48](https://github.com/n64hub/mario-party-3-recomp/issues/48) | El barrido del cambio de turno no se dibuja, así que se ven las casillas del tablero irse de grupo en grupo | **Arreglado** en la v0.2.9 |
+| [#49](https://github.com/n64hub/mario-party-3-recomp/issues/49) | Los minijuegos se estiran en vez de quedarse en 4:3, y un par de ellos se vuelven muy difíciles de jugar | **Arreglado** en la v0.2.8, con `RT64_SCISSOR_INSIDE_FRAMEBUFFER` |
+| [#52](https://github.com/n64hub/mario-party-3-recomp/issues/52) | El tablero se redibujaba encogido a 4:3 en el primer paso del barrido del cambio de turno | **Arreglado** en la v0.2.10, comprobado aquí midiendo |
+| [#54](https://github.com/n64hub/mario-party-3-recomp/issues/54) | Los **personajes** siguen estrechándose a 0,75 de su ancho durante el barrido, respecto al centro de la pantalla, mientras el tablero y el decorado no | **Abierto.** Medido en tres cambios de turno: le pasa a todos los personajes, no solo al que juega, y aguanta tanto con Vulkan como con la interpolación apagada |
+| [#55](https://github.com/n64hub/mario-party-3-recomp/issues/55) | Con la interpolación encendida, los personajes se dibujan en el sitio de sus vecinos durante la cinemática de apertura | **Abierto**, pero ya hay un arreglo en `main` (PR #56, `model_ids.cpp`) que no está en ninguna versión publicada |
 
 **Lo que NO se afirma aquí:** que una partida entera corra limpia de principio a fin.
 

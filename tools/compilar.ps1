@@ -49,7 +49,7 @@ param(
     [Parameter(Mandatory)][string]$Rom,
     [ValidateSet('todos', 'rom', 'recompilar', 'parches', 'pc', 'libs', 'appx')]
     [string]$Paso = 'todos',
-    [string]$Version = 'v0.2.7',
+    [string]$Version = 'v0.2.10',
     [string]$Repositorio = 'https://github.com/n64hub/mario-party-3-recomp.git',
     [string]$RomNombre = 'marioparty3.us.z64',
     [string]$Objetivo = 'MarioParty3Recompiled',

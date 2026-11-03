@@ -22,25 +22,33 @@ nothing here has been measured on it.
 
 ## Where this port stands
 
-Built from the game's **v0.2.7**. This is the one of the three that has actually been played,
-so it is the one with the most to say. Measured on an Xbox Series X:
+Built from the game's **v0.2.10**. The recipe was re-checked against it on 2026-11-02: the six
+anchors `tools/parche_uwp_build.py` relies on all still apply, unchanged, on `v0.2.10` and on the
+current `main` alike, so nothing here needed rewriting for the versions in between. This is the
+one of the three that has actually been played, so it is the one with the most to say. Measured
+on an Xbox Series X:
 
 | | |
 |---|---|
-| ✅ Boots, draws and takes controller input | Package «Mario Party 3 Recomp» 0.1.0.3, installed through the Device Portal |
+| ✅ Boots, draws and takes controller input | Package «Mario Party 3 Recomp» 0.1.0.5, built from v0.2.10 and installed through the Device Portal on 2026-11-02 |
 | ✅ **60 FPS**, measured with the game's own counter | The logic runs at 30 Hz and RT64 interpolates; the counter reports presented frames |
 | ✅ The launcher comes up, and the ROM validates by itself | From `LocalState`, with no dialog |
 | ✅ The intro draws **complete**, at 1920×1080, with no black surfaces | The ubershader culling fix and the mipmap addressing fix doing their job from the first launch — see [`docs/HOW-IT-WORKS.md`](docs/HOW-IT-WORKS.md) |
-| ✅ **Boards and minigames play** | Tested with a controller on an Xbox Series X on 2026-11-01 |
+| ✅ **Boards and minigames play** | Tested with a controller on an Xbox Series X on 2026-11-01 — on package **0.1.0.3**, built from v0.2.7. The 0.1.0.5 package above has been booted and measured, not yet played through with a controller |
+| ✅ The opening cutscene is drawn at an exact 4:3 | 1438 × 1079 px, measured on the console itself, on package 0.1.0.5 |
 
-**Three faults found while playing, and none of them is the port's.** All three are the game
-project's, reproduce on its own Windows build, and are reported upstream:
+**Six faults found while playing, and none of them is the port's.** All six are the game
+project's, reproduce on its own Windows build, and are reported upstream. Four were fixed within
+the day:
 
 | | What it was | Where it stands |
 |---|---|---|
 | [#43](https://github.com/n64hub/mario-party-3-recomp/issues/43) | Everything flat drawn washed out and blown: the game switches the N64's gamma correction off at boot and that call was not reaching the recompiled code | **Fixed** by its author the same day, in v0.2.7. Measuring the same scene before and after, the old build is exactly the new one to the power 1/2.2 — the best-fitting exponent is **0.455**, with 0.21 levels of mean error out of 256 |
-| [#48](https://github.com/n64hub/mario-party-3-recomp/issues/48) | The turn-change wipe is never drawn, so the board's spaces are seen vanishing group by group | Open |
-| [#49](https://github.com/n64hub/mario-party-3-recomp/issues/49) | Minigames are stretched instead of kept at 4:3, which makes a couple of them very hard to play | Open. ⚠ Until it is fixed, those minigames play correctly in a **4:3** window |
+| [#48](https://github.com/n64hub/mario-party-3-recomp/issues/48) | The turn-change wipe is never drawn, so the board's spaces are seen vanishing group by group | **Fixed** in v0.2.9 |
+| [#49](https://github.com/n64hub/mario-party-3-recomp/issues/49) | Minigames are stretched instead of kept at 4:3, which makes a couple of them very hard to play | **Fixed** in v0.2.8, with `RT64_SCISSOR_INSIDE_FRAMEBUFFER` |
+| [#52](https://github.com/n64hub/mario-party-3-recomp/issues/52) | The board itself is redrawn squeezed to 4:3 at the first step of the turn-change wipe | **Fixed** in v0.2.10, confirmed here by measuring |
+| [#54](https://github.com/n64hub/mario-party-3-recomp/issues/54) | The **characters** are still squeezed to 0.75 of their width during the wipe, about the screen's centre, while the board and the scenery are not | **Open.** Measured on three turn changes: it is every character, not only the active one, and it survives both Vulkan and frame interpolation being off |
+| [#55](https://github.com/n64hub/mario-party-3-recomp/issues/55) | With interpolation on, the characters are drawn in each other's places during the opening cutscene | **Open**, but a fix is already on `main` (PR #56, `model_ids.cpp`), in no release yet |
 
 **What is NOT claimed here:** that a whole party runs cleanly end to end.
 
