@@ -5,6 +5,22 @@ All notable changes to this repository. Dates are `YYYY-MM-DD`.
 This file is not translated: it is a historical record that grows with each version, and
 translating it would mean two histories that drift apart.
 
+## [1.0.3] — 2026-11-03
+
+### Changed
+
+- **This repository no longer explains itself by pointing at other repositories of this
+  catalogue.** Comments and documentation introduced a decision, a trap or a default as "the same
+  as in such-and-such other port of ours" — which asked anyone who came here for this game to go
+  and read about a different one first. Each of those comparisons carried a fact that reads better
+  stated outright, so that is what is written now.
+
+  What is still cited is everything that is **not** ours: the upstream project, the third-party
+  forks the recipe is built on, and the files taken from them under their own license.
+
+**This release also carries 1.0.2**, which was written up in this file on 2026-11-02 but never
+tagged: catching up with the game's v0.2.10, with the six anchors re-checked against it.
+
 ## [1.0.2] — 2026-11-02
 
 **Caught up with the game's v0.2.10, and the recipe checked against it rather than assumed.**
