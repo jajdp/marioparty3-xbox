@@ -5,6 +5,23 @@ All notable changes to this repository. Dates are `YYYY-MM-DD`.
 This file is not translated: it is a historical record that grows with each version, and
 translating it would mean two histories that drift apart.
 
+## [1.0.5] — 2026-11-03
+
+### Fixed
+
+- **The by-hand example passed the prefix of the first game, and the build did not link.**
+  `tools/README.md` and the docstring of `tools/parche_uwp_build.py` both told you to run the step
+  with `marioparty`. That prefix is what the entry point is renamed to, so it produced
+  `marioparty_uwp_main`, while everything else here — `uwp\main.cpp` included — expects
+  `marioparty3_uwp_main`. Running that step by hand therefore ended in the very
+  `LNK2019: unresolved external symbol` that the same README explains three lines above. Both now
+  say `marioparty3`.
+
+  **Only the by-hand path was affected.** `compilar.ps1` already defaults to
+  `-Prefijo marioparty3`, which is why every build made with it worked and the error never showed
+  up here. The example tree in the docstring, `C:\mp\src`, now reads `C:\mp3\src` for the same
+  reason: it was the first game's, copied over.
+
 ## [1.0.4] — 2026-11-03
 
 **Caught up with the game's v0.2.13, which fixes the last two faults this port had open.** The
