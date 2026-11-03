@@ -49,7 +49,7 @@ param(
     [Parameter(Mandatory)][string]$Rom,
     [ValidateSet('todos', 'rom', 'recompilar', 'parches', 'pc', 'libs', 'appx')]
     [string]$Paso = 'todos',
-    [string]$Version = 'v0.2.10',
+    [string]$Version = 'v0.2.13',
     [string]$Repositorio = 'https://github.com/n64hub/mario-party-3-recomp.git',
     [string]$RomNombre = 'marioparty3.us.z64',
     [string]$Objetivo = 'MarioParty3Recompiled',
@@ -96,6 +96,10 @@ function Import-EntornoVS {
 }
 
 # Vuelve a sellar los parches de la web antes de cada configure (trampa 4).
+# ⚠ Y lo que el sello deja fuera no llega: lo que el proyecto original meta DENTRO de ese parche
+#   falta del arbol sin decir nada. La v0.2.13 es ese caso -su unico cambio sube
+#   lib/N64Recomp-browser, y el arreglo del issue #62 viaja en su patches/N64ModernRuntime.patch-.
+#   Al appx le da igual (el parche UWP ya recorta la RDRAM a 512 MB); a un .exe de escritorio no.
 function Sellar {
     $sellar = Join-Path $here 'sellar.cmake'
     if (Test-Path $sellar) { cmake -P $sellar $src 2>&1 | Select-String 'sellado' | Out-Null }

@@ -22,24 +22,26 @@ arranque; aquí no se ha medido nada de eso.
 
 ## En qué punto está el port
 
-Construido desde la **v0.2.10** del juego. La receta se volvió a comprobar contra ella el
-2026-11-02: las seis anclas de las que depende `tools/parche_uwp_build.py` siguen aplicando, sin
-tocar nada, tanto en `v0.2.10` como en el `main` de ahora, así que nada de aquí hubo que
-reescribirlo por las versiones intermedias. Es el único de los tres que se ha jugado de verdad,
-así que es el que más tiene que contar. Medido en una Xbox Series X:
+Construido desde la **v0.2.13** del juego. La receta se volvió a comprobar contra ella el
+2026-11-03, corriendo `tools/parche_uwp_build.py` sobre un checkout limpio de la v0.2.13: sus tres
+cambios aplicaron, y los dos archivos que reescribe salieron **idénticos** al árbol del que se
+construye este port. Los tres commits de bibliotecas que fija esta familia tampoco se mueven entre
+la v0.2.10 y la v0.2.13, así que los parches UWP de worleydl y las cuatro resoluciones de
+conflictos caen igual que antes. Es el único de los tres que se ha jugado de verdad, así que es el
+que más tiene que contar. Medido en una Xbox Series X:
 
 | | |
 |---|---|
-| ✅ Arranca, dibuja y responde al mando | Paquete «Mario Party 3 Recomp» 0.1.0.5, construido desde la v0.2.10 e instalado por el Device Portal el 2026-11-02 |
+| ✅ Arranca, dibuja y responde al mando | Paquete «Mario Party 3 Recomp» 0.1.0.6, construido desde la v0.2.13 e instalado por el Device Portal el 2026-11-03 |
 | ✅ **60 FPS**, medidos con el contador del propio juego | La lógica corre a 30 Hz y RT64 interpola; el contador mide fotogramas presentados |
 | ✅ El launcher sale y la ROM se valida sola | Desde `LocalState`, sin diálogo |
 | ✅ La intro se dibuja **completa**, a 1920×1080 y sin superficies negras | El arreglo del culling del ubershader y el de los modos del mipmap funcionan desde el primer arranque — ver [`docs/HOW-IT-WORKS.es.md`](docs/HOW-IT-WORKS.es.md) |
-| ✅ **Los tableros y los minijuegos se juegan** | Probado con mando en una Xbox Series X el 2026-11-01 — con el paquete **0.1.0.3**, construido desde la v0.2.7. El 0.1.0.5 de arriba está arrancado y medido, pero aún no jugado con mando |
+| ✅ **Los tableros y los minijuegos se juegan** | Probado con mando en una Xbox Series X el 2026-11-01 — con el paquete **0.1.0.3**, construido desde la v0.2.7. El 0.1.0.6 de arriba está arrancado y medido, pero aún no jugado con mando |
 | ✅ La cinemática de apertura se dibuja a 4:3 exacto | 1438 × 1079 px, medidos en la propia consola, con el paquete 0.1.0.5 |
 
 **Seis fallos encontrados jugando, y ninguno es del port.** Los seis son del proyecto del juego,
-se reproducen en su propia compilación de Windows, y están reportados aguas arriba. Cuatro se
-arreglaron en el día:
+se reproducen en su propia compilación de Windows, y se reportaron aguas arriba. **Los seis están
+ya arreglados ahí**, cuatro de ellos el mismo día en que se reportaron:
 
 | | Qué era | Cómo está |
 |---|---|---|
@@ -47,10 +49,19 @@ arreglaron en el día:
 | [#48](https://github.com/n64hub/mario-party-3-recomp/issues/48) | El barrido del cambio de turno no se dibuja, así que se ven las casillas del tablero irse de grupo en grupo | **Arreglado** en la v0.2.9 |
 | [#49](https://github.com/n64hub/mario-party-3-recomp/issues/49) | Los minijuegos se estiran en vez de quedarse en 4:3, y un par de ellos se vuelven muy difíciles de jugar | **Arreglado** en la v0.2.8, con `RT64_SCISSOR_INSIDE_FRAMEBUFFER` |
 | [#52](https://github.com/n64hub/mario-party-3-recomp/issues/52) | El tablero se redibujaba encogido a 4:3 en el primer paso del barrido del cambio de turno | **Arreglado** en la v0.2.10, comprobado aquí midiendo |
-| [#54](https://github.com/n64hub/mario-party-3-recomp/issues/54) | Los **personajes** siguen estrechándose a 0,75 de su ancho durante el barrido, respecto al centro de la pantalla, mientras el tablero y el decorado no | **Abierto.** Medido en tres cambios de turno: le pasa a todos los personajes, no solo al que juega, y aguanta tanto con Vulkan como con la interpolación apagada |
-| [#55](https://github.com/n64hub/mario-party-3-recomp/issues/55) | Con la interpolación encendida, los personajes se dibujan en el sitio de sus vecinos durante la cinemática de apertura | **Abierto**, pero ya hay un arreglo en `main` (PR #56, `model_ids.cpp`) que no está en ninguna versión publicada |
+| [#54](https://github.com/n64hub/mario-party-3-recomp/issues/54) | Los **personajes** siguen estrechándose a 0,75 de su ancho durante el barrido, respecto al centro de la pantalla, mientras el tablero y el decorado no | **Arreglado** en la v0.2.12. Antes del arreglo, medido en tres cambios de turno: le pasaba a todos los personajes, no solo al que juega, y aguantaba tanto con Vulkan como con la interpolación apagada. Comprobado aquí jugando un cambio de turno con la v0.2.13 |
+| [#55](https://github.com/n64hub/mario-party-3-recomp/issues/55) | Con la interpolación encendida, los personajes se dibujan en el sitio de sus vecinos durante la cinemática de apertura | **Arreglado** en la v0.2.11. Comprobado aquí midiendo la misma escena con la v0.2.13 y la interpolación encendida, que es la condición del fallo: el zigzag del vestido de Peach cae de **0,54** de la mediana a **0,009**, y la diferencia media por píxel entre fotogramas seguidos de **6,40** a **0,90** |
 
 **Lo que NO se afirma aquí:** que una partida entera corra limpia de principio a fin.
+
+⚠ **Y un arreglo que esta receta no recibe gratis.** La v0.2.13 arregla que el juego no arranque
+en un PC con poca memoria libre ([#62](https://github.com/n64hub/mario-party-3-recomp/issues/62),
+reportado por otra persona), y su **único** cambio es subir `lib/N64Recomp-browser`: el arreglo en
+sí viaja dentro del `patches/N64ModernRuntime.patch` de ese submódulo —un parche que esta receta
+**sella sin aplicar** (trampa 4)—. Para el appx no cambia nada, porque el parche UWP ya recorta la
+reserva de RDRAM a 512 MB; para un `.exe` de escritorio construido del mismo árbol, no está.
+**Cuando una versión del juego no mueve más que ese submódulo, hay que leer su `patches/` antes de
+dar el salto por vacío.**
 
 ## Qué es este repositorio
 
@@ -59,12 +70,12 @@ arreglaron en el día:
 
 | Pieza | Qué es |
 |---|---|
-| [`tools/compilar.ps1`](tools/compilar.ps1) | **La receta entera**, en cinco pasos que se pueden repetir de uno en uno: ROM, recompilar, parchear, bibliotecas estáticas, appx. Con el *porqué* de cada decisión al lado |
+| [`tools/compilar.ps1`](tools/compilar.ps1) | **La receta entera**, en seis pasos que se pueden repetir de uno en uno: ROM, recompilar, parchear, la compilación de escritorio, bibliotecas estáticas, appx. Con el *porqué* de cada decisión al lado |
 | [`tools/parche_uwp_build.py`](tools/parche_uwp_build.py) | Los tres cambios que necesita **el juego mismo**: la opción `UWP_BUILD`, el renombrado de `main()` y el `SDL_INIT_HAPTIC`. Por anclas exactas, idempotente |
 | [`tools/resolver_conflictos.py`](tools/resolver_conflictos.py) | Los cuatro conflictos que dan los parches UWP de worleydl sobre este árbol, y por qué los cuatro se resuelven igual: **quedándose con los dos lados** |
 | [`tools/sellar.cmake`](tools/sellar.cmake) | Vuelve a sellar los parches de la web de `N64Recomp-browser` para que el siguiente configure no intente ponerlos otra vez y muera |
 | [`docs/HOW-IT-WORKS.es.md`](docs/HOW-IT-WORKS.es.md) | Las dos compilaciones, y las diez trampas que costaron tiempo de verdad |
-| [`docs/INSTALL.es.md`](docs/INSTALL.es.md) | Qué hace falta, los cinco comandos, y cómo llega a la consola |
+| [`docs/INSTALL.es.md`](docs/INSTALL.es.md) | Qué hace falta, los seis comandos, y cómo llega a la consola |
 
 A diferencia de casi todos los ports de este catálogo, **aquí sí se publican los cambios al
 juego**: el juego es GPL-3.0, así que su código se puede citar. Cuánto se cita, qué y de dónde,

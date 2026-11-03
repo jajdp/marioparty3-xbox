@@ -5,6 +5,48 @@ All notable changes to this repository. Dates are `YYYY-MM-DD`.
 This file is not translated: it is a historical record that grows with each version, and
 translating it would mean two histories that drift apart.
 
+## [1.0.4] — 2026-11-03
+
+**Caught up with the game's v0.2.13, which fixes the last two faults this port had open.** The
+game went from v0.2.10 to v0.2.13 in a day: #55 in v0.2.11, #54 in v0.2.12, and a memory fix from
+another user's report in v0.2.13.
+
+### Changed
+
+- **`tools/compilar.ps1`: the default `-Version` is now `v0.2.13`.**
+- The recipe was **re-checked against v0.2.13, not assumed**: `tools/parche_uwp_build.py` was run
+  over a clean v0.2.13 checkout and its three changes applied, leaving `CMakeLists.txt` and
+  `src/main/main.cpp` **identical** to the tree this port is built from. No tool needed changing.
+  The three library commits this family pins — `rt64` 5473732, `N64ModernRuntime` cdf5abb and
+  `RecompFrontend` b2c5c18 — do not move between the two versions either, so worleydl's UWP
+  patches and the four conflict resolutions land exactly as before.
+- The upstream fault table: **#54 is fixed in v0.2.12** and **#55 in v0.2.11**. All six faults
+  this port found while playing are now fixed upstream, and none of them was the port's. #55 was
+  checked here by measuring the same scene with interpolation on, which is the condition for the
+  fault: the zigzag on Peach's dress drops from 0.54 of the median to **0.009**, and the mean
+  per-pixel difference between consecutive frames from 6.40 to **0.90**. #54 was checked by
+  playing a turn change.
+- `README.md` / `README.es.md`: built from v0.2.13, package `0.1.0.6`. The controller
+  play-through on record is still the one from package `0.1.0.3`; the 0.1.0.6 package has been
+  booted and measured, and the table says so.
+
+### Added
+
+- ⚠⚠ **`docs/HOW-IT-WORKS.md` trap 4 now carries its corollary: what the stamp keeps out never
+  arrives.** v0.2.13's only change is bumping `lib/N64Recomp-browser`, and the fix it brings for
+  [#62](https://github.com/n64hub/mario-party-3-recomp/issues/62) lives inside that submodule's
+  `patches/N64ModernRuntime.patch` — the web patch this recipe stamps **without** applying. The
+  version jump looks empty and is not. It makes no difference to the appx (the UWP patch already
+  sets `allocation_size` to 512 MB), but it does to a desktop `.exe` built from the same tree.
+  `tools/compilar.ps1` says the same beside its `Sellar` function.
+
+### Worth knowing before you build it
+
+Going from v0.2.10 to v0.2.13 is **not** a re-link. `us.toml` gains **seven hooks** and
+`patches/widescreen.c` (+28), `patches/syms.ld` (+1), `src/game/camera_list.cpp` (+20) and
+`CMakeLists.txt` (+2) all change, so the `recompilar` step has to run again before `pc`, `libs`
+and `appx`.
+
 ## [1.0.3] — 2026-11-03
 
 ### Changed

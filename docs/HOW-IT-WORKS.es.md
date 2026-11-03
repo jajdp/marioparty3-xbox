@@ -143,6 +143,17 @@ cambió es que encima hay más.
 ⚠ Y no es solo en los pasos `pc` y `libs`: **`tools/recompile.sh` configura N64Recomp con el
 mismo CMake** y corre el mismo `apply.cmake`, así que muere igual. Hay que sellar también ahí.
 
+⚠⚠ **Y el corolario, que vale más que la trampa misma: lo que el sello deja fuera no llega
+nunca.** Volver a sellar dice «este parche ya está puesto» cuando no lo está, así que todo lo que
+el proyecto original meta **dentro** de ese parche falta del árbol sin decir nada. La **v0.2.13**
+del juego es justo ese caso: su único cambio es subir `lib/N64Recomp-browser`, y el arreglo que
+trae para el [#62](https://github.com/n64hub/mario-party-3-recomp/issues/62) —reservar el rango
+entero de la RDRAM y comprometer solo `mem_size`, en vez de comprometer los 4 GB— vive en el
+`patches/N64ModernRuntime.patch` de ese submódulo. El salto de versión parece vacío y no lo es. Al
+appx le da igual, porque el parche UWP ya pone `allocation_size` en 512 MB, pero a un `.exe` de
+escritorio construido del mismo árbol no. **Cuando una versión no mueve más que ese submódulo, hay
+que leer su `patches/` antes de dar el salto por vacío.**
+
 **5. `git apply --3way` pide el estado en el índice** («does not match index»): hay que hacer
 `git -C lib/<n> add -A` antes… y `git -C lib/<n> reset` después, o se rompe la trampa 4. Las dos
 mitades de la misma trampa.

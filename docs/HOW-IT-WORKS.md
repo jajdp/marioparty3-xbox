@@ -141,6 +141,17 @@ changed is that there is more on top of it.
 ⚠ And it is not only the `pc` and `libs` steps: **`tools/recompile.sh` configures N64Recomp with
 the same CMake** and runs the same `apply.cmake`, so it dies the same way. Re-stamp there too.
 
+⚠⚠ **And the corollary, which is worth more than the trap itself: what the stamp keeps out never
+arrives.** Re-stamping says "this patch is already in" when it is not, so anything the upstream
+project puts **inside** that patch is quietly absent from the tree. The game's **v0.2.13** is
+exactly that case: its only change is bumping `lib/N64Recomp-browser`, and the fix it brings for
+[#62](https://github.com/n64hub/mario-party-3-recomp/issues/62) — reserving the whole RDRAM range
+and committing only `mem_size`, instead of committing all 4 GB — lives in that submodule's
+`patches/N64ModernRuntime.patch`. The version jump looks empty and is not. It makes no difference
+to the appx, because the UWP patch already sets `allocation_size` to 512 MB, but it does to a
+desktop `.exe` built from the same tree. **When a release moves nothing but that submodule, read
+its `patches/` before deciding the jump brings nothing.**
+
 **5. `git apply --3way` wants the state in the index** ("does not match index"): you have to
 `git -C lib/<n> add -A` first… and `git -C lib/<n> reset` afterwards, or you break trap 4. Two
 halves of the same trap.
